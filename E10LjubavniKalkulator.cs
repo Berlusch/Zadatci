@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
@@ -38,7 +40,7 @@ namespace Ucenje
             Console.ResetColor();
             Console.WriteLine();
             Console.WriteLine("1. Ljubavni kalkulator (rubno zbrajanje)");
-            Console.WriteLine("2. Ljubavni kalkulator (susjedno zbrajanje");
+            Console.WriteLine("2. Ljubavni kalkulator (susjedno zbrajanje)");
             Console.WriteLine();
             OdaberiOpciju();
 
@@ -97,15 +99,21 @@ namespace Ucenje
                         {
                             brojac[slovo] = 1;
                         }
+
                     }
+
                     int[] imenabrojevi = new int[imena.Length];
-
-
-                    for (int i = 0; i < imena.Length; i++)
+                    int indeks = 0;
+                    foreach (char znak in imena)
                     {
-                        imenabrojevi[i] = brojac[imena[i]];
+                        int broj = brojac.FirstOrDefault(par => par.Key == znak).Value;
+
+                        // Dodaj vrijednost u niz
+                        imenabrojevi[indeks] = broj;
+                        indeks++;
                     }
 
+                    Console.WriteLine(string.Join("", imenabrojevi));
 
                     switch (opcija)
                     {
@@ -211,8 +219,8 @@ namespace Ucenje
                     int a = (rezultat[0] - '0') + (rezultat[1] - '0');
                     int b = rezultat[2] - '0';
                     rezultat = string.Concat("", a, b);
-                }while(int.Parse(rezultat)>100);
-                
+                } while (int.Parse(rezultat) > 100);
+
 
             }
             return rezultat;
@@ -245,18 +253,22 @@ namespace Ucenje
 
         }
 
+
         private static string ZbrojiZnamenke(int[] broj)
         {
-            //ako je broj znamenki 0-2, vraća taj broj
+
+
             if (broj.Length <= 1)
             {
                 return string.Join("", broj);
             }
+
+
             int prvi = broj[0];
             int zadnji = broj[broj.Length - 1];
             int sum = prvi + zadnji;
 
-            int[] sredina = new int[broj.Length - 2];// minus 2 zato što oduzima prvi i zadnji
+            int[] sredina = new int[broj.Length - 2];
             Array.Copy(broj, 1, sredina, 0, broj.Length - 2);
             string rezultatSredine = ZbrojiZnamenke(sredina);
             string rezultat = sum.ToString() + rezultatSredine;
@@ -265,6 +277,7 @@ namespace Ucenje
                 return ZbrojiZnamenke(stringUBroj(rezultat));
             }
             return rezultat;
+
         }
 
         private static int[] stringUBroj(string broj)
@@ -276,6 +289,13 @@ namespace Ucenje
             }
             return brojevi;
         }
+
     }
 }
+
+    
+
+
+
+
 
