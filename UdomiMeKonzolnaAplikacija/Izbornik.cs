@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Ucenje.E20KonzolnaAplikacija;
 using Ucenje.UdomiMeKonzolnaAplikacija.Model;
 
+
 namespace Ucenje.UdomiMeKonzolnaAplikacija
 {
     internal class Izbornik
@@ -41,14 +42,39 @@ namespace Ucenje.UdomiMeKonzolnaAplikacija
                 using (StreamReader file = File.OpenText(filePath)) // Korištenje using za automatsko zatvaranje
                 {
                     ObradaPas.Psi = JsonConvert.DeserializeObject<List<Pas>>(file.ReadToEnd());
+
                 }
             }
-            
+
+        }
+        public static bool PotvrdaUnosa()
+        {
+            Console.WriteLine("Želite li spremiti promjene? (da/ne)");
+            string potvrdaUnosa = Console.ReadLine().ToLower();
+
+            if (potvrdaUnosa == "da")
+            {
+                Console.WriteLine("------------------------------");
+                Console.WriteLine("Podatci su spremljeni, hvala.");
+                Console.WriteLine();
+
+                return true;
+            }
+            else
+            {
+                Console.Clear();
+                Console.WriteLine("-------------------------------");
+                Console.WriteLine("Odustali ste od unosa.");
+                Console.WriteLine("-------------------------------");
+                return false;
+            }
         }
 
         private void PrikaziIzbornik()
         {
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("GLAVNI IZBORNIK");
+            Console.ResetColor();
             Console.WriteLine();
             Console.WriteLine("1. Psi");
             Console.WriteLine("2. Udomitelji");
@@ -59,7 +85,7 @@ namespace Ucenje.UdomiMeKonzolnaAplikacija
 
         private void OdabirOpcijeIzbornika()
         {
-            Console.WriteLine("----------------------------------------");          
+            Console.WriteLine("----------------------------------------");
             Console.WriteLine();
 
             switch (Pomocno.UcitajRasponBroja("Odaberite stavku izbornika", 1, 4))
@@ -69,45 +95,72 @@ namespace Ucenje.UdomiMeKonzolnaAplikacija
                     ObradaPas.PrikaziIzbornik();
                     PrikaziIzbornik();
                     break;
-                /*case 2:
+                case 2:
                     Console.Clear();
                     ObradaUdomitelj.PrikaziIzbornik();
                     PrikaziIzbornik();
                     break;
-                case 3:
+                /*case 3:
                     Console.Clear();
                     ObradaUpit.PrikaziIzbornik();
                     PrikaziIzbornik();
                     break;*/
-                case 4:
-                    Console.WriteLine("Hvala na korištenju aplikacije, doviđenja!");
+                case 4:                    
                     SpremiPodatke();
+                    Console.WriteLine("Hvala na korištenju aplikacije, doviđenja!");
                     break;
             }
         }
 
-        private void SpremiPodatke()
+        public void SpremiPodatke()
         {
+            
+            if (!PotvrdaUnosa())
+            {
+                
+                return;
+            }
+
+            // Ako je u DEV načinu rada, ne spremamo podatke
             if (Pomocno.DEV)
             {
                 return;
             }
 
-            //Console.WriteLine(JsonConvert.SerializeObject(ObradaSmjer.Smjerovi));
+            
+            string docPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "GitHub");
 
-            string docPath =
-          Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-
-            StreamWriter outputFile = new StreamWriter(Path.Combine(docPath, "psi.json"));
-            outputFile.WriteLine(JsonConvert.SerializeObject(ObradaPas.Psi));
-            outputFile.Close();
+            using (StreamWriter outputFile = new StreamWriter(Path.Combine(docPath, "psi.json")))
+            {
+                outputFile.WriteLine(JsonConvert.SerializeObject(ObradaPas.Psi));
+            }
         }
 
         private void PozdravnaPoruka()
         {
+            string asciiPas = @"
+  / \__
+ (    @\___
+ /         O                                
+/   (_____/
+/_____/   U";
+
+string asciiPasZrcalno = @"
+                        __ / \  
+                    ___/@     ) 
+                    O         \
+                    \_____)   \
+                    U   \_____\ 
+";
+            
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.Write(asciiPas+asciiPasZrcalno);
+            Console.WriteLine();                     
             Console.WriteLine("*********************************");
             Console.WriteLine("********* UDOMI ME **************");
             Console.WriteLine("*********************************");
+            Console.ResetColor();   
+            Console.WriteLine();
         }
     }
 }
